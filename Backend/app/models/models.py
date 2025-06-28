@@ -9,6 +9,7 @@ from sqlalchemy import (
     DECIMAL,
     DateTime,
     Boolean,
+    TIMESTAMP,
 )
 from sqlalchemy.orm import relationship
 from datetime import datetime, timezone
@@ -27,13 +28,10 @@ class User(Base):
     id = Column(String, primary_key=True, default=generate_uuid)
     username = Column(String, unique=True, nullable=False)
     email = Column(String, unique=True, nullable=False)
-    password_hash = Column(Text, nullable=False)
     role = Column(String, nullable=False)  # 'creator' or 'brand'
     profile_image = Column(Text, nullable=True)
     bio = Column(Text, nullable=True)
-    created_at = Column(
-        DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)
-    )
+    created_at = Column(TIMESTAMP, default=datetime.utcnow)
 
     is_online = Column(Boolean, default=False)  # ✅ Track if user is online
     last_seen = Column(

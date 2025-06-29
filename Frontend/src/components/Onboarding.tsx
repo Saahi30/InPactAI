@@ -511,7 +511,12 @@ export default function Onboarding() {
       setProgress(90);
       setSubmitSuccess('Onboarding complete! Your details have been saved.');
       setProgress(100);
-      setTimeout(() => navigate('/dashboard'), 1200);
+      // Route based on role
+      if (role === "brand") {
+        setTimeout(() => navigate('/brand/dashboard'), 1200);
+      } else {
+        setTimeout(() => navigate('/dashboard'), 1200);
+      }
     } catch (err: any) {
       setSubmitError(err.message || 'Failed to submit onboarding data.');
       setProgress(0);

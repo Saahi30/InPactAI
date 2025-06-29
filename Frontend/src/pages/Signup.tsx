@@ -40,18 +40,35 @@ export default function SignupPage() {
     setError("");
     try {
       const { name, email, password } = formData;
+      
+      // Check if user already exists
+      const { data: existingUser } = await supabase.auth.signInWithPassword({
+        email,
+        password: "dummy-password-to-check-existence",
+      });
+      
+      if (existingUser.user) {
+        setError("An account with this email already exists. Please sign in instead.");
+        setIsLoading(false);
+        return;
+      }
+      
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: { data: { name } },
       });
       if (error) {
-        setError(error.message);
+        if (error.message.includes("already registered")) {
+          setError("An account with this email already exists. Please sign in instead.");
+        } else {
+          setError(error.message);
+        }
         setIsLoading(false);
         return;
       }
       setIsLoading(false);
-      navigate("/onboarding");
+      // AuthContext will handle navigation based on user onboarding status and role
     } catch (err) {
       setError("Something went wrong. Please try again.");
     } finally {
@@ -69,11 +86,7 @@ export default function SignupPage() {
       return;
     }
 
-    supabase.auth.onAuthStateChange((event, session) => {
-      if (session) {
-        login();
-      }
-    });
+    // AuthContext will handle navigation based on user onboarding status and role
   };
 
   const passwordStrength = () => {
